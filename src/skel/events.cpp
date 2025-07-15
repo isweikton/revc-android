@@ -1,3 +1,4 @@
+//1sh0zer: TODO Maybe move here android touch handling
 #include "common.h"
 #include "Pad.h"
 #include "ControllerConfig.h"

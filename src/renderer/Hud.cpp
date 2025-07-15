@@ -1428,7 +1428,7 @@ void CHud::Draw()
 			BigMessageInUse[2] = 0.0f;
 		}
 	}
-	if(!CCutsceneMgr::IsRunning())
+	if(m_Wants_To_Draw_Hud)
 		gTouch.Draw();
 }
 
