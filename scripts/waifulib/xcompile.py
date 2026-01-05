@@ -32,6 +32,7 @@ ANDROID_64BIT_API_MIN = 21 # minimal API level that supports 64-bit targets
 class Android:
 	ctx            = None # waf context
 	arch           = None
+	host_os        = None
 	toolchain      = None
 	api            = None
 	ndk_home       = None
@@ -44,6 +45,7 @@ class Android:
 		self.api = api
 		self.toolchain = toolchain
 		self.arch = arch
+		self.host_os = self.get_os()
 		for i in ANDROID_NDK_ENVVARS:
 			self.ndk_home = os.getenv(i)
 			if self.ndk_home != None:
@@ -148,26 +150,24 @@ class Android:
 			return 'arm64-v8a'
 		return self.arch
 
+	def get_os(self):
+		if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+			return 'windows'
+		elif sys.platform.startswith('darwin'):
+			return 'darwin'
+		elif sys.platform.startswith('linux'):
+			return 'linux'
+
 	def gen_host_toolchain(self):
 		# With host toolchain we don't care about OS
 		# so just download NDK for Linux x86_64
 		if self.is_host():
 			return 'linux-x86_64'
-
-		if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
-			osname = 'windows'
-		elif sys.platform.startswith('darwin'):
-			osname = 'darwin'
-		elif sys.platform.startswith('linux'):
-			osname = 'linux'
-		else:
-			self.ctx.fatal('Unsupported by NDK host platform')
-
 		if sys.maxsize > 2**32:
 			arch = 'x86_64'
 		else: arch = 'x86'
 
-		return '%s-%s' % (osname, arch)
+		return '%s-%s' % (self.host_os, arch)
 
 	def gen_gcc_toolchain_path(self):
 		path = 'toolchains'
@@ -198,12 +198,16 @@ class Android:
 	def cc(self):
 		if self.is_host():
 			return 'clang --target=%s%d' % (self.ndk_triplet(), self.api)
-		return self.gen_toolchain_path() + ('clang' if self.is_clang() else 'gcc')
+		if self.host_os != "windows":
+			return self.gen_toolchain_path() + ('clang' if self.is_clang() else 'gcc')
+		else: return self.gen_toolchain_path() + "clang.cmd"
 
 	def cxx(self):
 		if self.is_host():
 			return 'clang++ --target=%s%d' % (self.ndk_triplet(), self.api)
-		return self.gen_toolchain_path() + ('clang++' if self.is_clang() else 'g++')
+		if self.host_os != "windows":
+			return self.gen_toolchain_path() + ('clang++' if self.is_clang() else 'g++')
+		else: return self.gen_toolchain_path() + "clang++.cmd"
 
 	def strip(self):
 		if self.is_host():
@@ -230,7 +234,7 @@ class Android:
 
 	def sysroot(self):
 		if self.ndk_rev == 27:
-			return os.path.abspath(os.path.join(self.ndk_home, 'toolchains/llvm/prebuilt/linux-x86_64/sysroot'))
+			return os.path.abspath(os.path.join(self.ndk_home, f'toolchains/llvm/prebuilt/{self.gen_host_toolchain()}/sysroot'))
 		if self.ndk_rev >= ANDROID_NDK_UNIFIED_SYSROOT_MIN:
 			return os.path.abspath(os.path.join(self.ndk_home, 'sysroot'))
 		else:
@@ -326,6 +330,11 @@ def options(opt):
 		help='enable building for android, format: --android=<arch>,<toolchain>,<api>, example: --android=armeabi-v7a-hard,4.9,21')
 
 def configure(conf):
+	if sys.platform == 'win32': #kinda hack for xcomple from windows, but i don't care
+		from waflib.Tools import compiler_c, compiler_cxx
+		compiler_c.c_compiler['win32'] = ['clang']
+		compiler_cxx.cxx_compiler['win32'] = ['clang++']
+
 	if conf.options.ANDROID_OPTS:
 		values = conf.options.ANDROID_OPTS.split(',')
 		if len(values) != 3:
@@ -340,7 +349,7 @@ def configure(conf):
 		stlarch = values[0]
 		if values[0] == 'aarch64': stlarch = 'aarch64-linux-android'
 		if values[0] == 'armeabi-v7a': stlarch = 'arm-linux-androideabi'
-		
+
 		conf.android = android = Android(conf, values[0], values[1], int(values[2]))
 		conf.environ['CC'] = android.cc()
 		conf.environ['CXX'] = android.cxx()
@@ -349,8 +358,8 @@ def configure(conf):
 		conf.env.CXXFLAGS += android.cflags(True)
 		conf.env.LINKFLAGS += android.linkflags()
 		conf.env.LDFLAGS += android.ldflags()
-		conf.env.INCLUDES += [os.path.abspath(os.path.join(android.ndk_home, 'toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1'))]
-		conf.env.STLIBPATH += [os.path.abspath(os.path.join(android.ndk_home, 'toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/', stlarch, str(android.api)))]
+		conf.env.INCLUDES += [os.path.abspath(os.path.join(android.ndk_home, f'toolchains/llvm/prebuilt/{android.gen_host_toolchain()}/sysroot/usr/include/c++/v1'))]
+		conf.env.STLIBPATH += [os.path.abspath(os.path.join(android.ndk_home, f'toolchains/llvm/prebuilt/{android.gen_host_toolchain()}/sysroot/usr/lib/', stlarch, str(android.api)))]
 		#conf.env.LDFLAGS += ['-DANDROID_STL=c++_static', '-stdlib=libc++','-lc++_static', '-lc++abi']
 
 		conf.env.HAVE_M = True
@@ -365,7 +374,6 @@ def configure(conf):
 		conf.msg('... C/C++ flags', ' '.join(android.cflags()).replace(android.ndk_home, '$NDK/'))
 		conf.msg('... link flags', ' '.join(android.linkflags()).replace(android.ndk_home, '$NDK/'))
 		conf.msg('... ld flags', ' '.join(android.ldflags()).replace(android.ndk_home, '$NDK/'))
-
 		# conf.env.ANDROID_OPTS = android
 		conf.env.DEST_OS2 = 'android'
 
