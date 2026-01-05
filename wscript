@@ -72,10 +72,10 @@ def check_deps(conf):
 			conf.check_cfg(package='sndfile', uselib_store='SNDFILE', args=['--cflags', '--libs'])
 	else:
 		conf.check(lib='SDL2', uselib_store='SDL2')
-		if conf.env.DEST_CPU != 'aarch64':
-			conf.check(lib='unwind', uselib_store='UNWIND')
-			conf.check(lib='crypto', uselib_store='CRYPTO')
-			conf.check(lib='ssl', uselib_store='SSL')
+		#if conf.env.DEST_CPU != 'aarch64':
+			#conf.check(lib='unwind', uselib_store='UNWIND')
+			#conf.check(lib='crypto', uselib_store='CRYPTO')
+			#conf.check(lib='ssl', uselib_store='SSL')
 		conf.check(lib='android_support', uselib_store='ANDROID_SUPPORT')
 		conf.check(lib='openal', uselib_store='OPENAL')
 		conf.check(lib='mpg123')
