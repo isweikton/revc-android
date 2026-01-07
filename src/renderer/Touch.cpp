@@ -18,6 +18,11 @@ Btn::Btn(float x1, float y1, float x2, float y2, BtnType type = BtnType::DEFAULT
 
 void CTouch::Init()
 {
+    touchButtons.clear();
+    
+    stickBtn = nullptr;
+    joyBtn = nullptr; //Clean this in case of re-init
+    
     touchButtons.emplace_back(0.5f, 0.0f, 1.0f, 1.0f, BtnType::LOOK, CRGBA(255, 0, 0, 255), false);
     touchButtons.emplace_back(0.15f, 0.60f, 0.3f, 0.70f, BtnType::JOY,   CRGBA(255, 255, 255, 255));
     touchButtons.emplace_back(0.0f, 0.0f, 0.05f, 0.05f, BtnType::STICK, CRGBA(0,   0,   255, 255));
@@ -60,21 +65,22 @@ void CTouch::Draw()
 void CTouch::UpdateLook()
 {
     float smoothing = 0.2f;
-    if(look_finger == -1 || !touchInfo[look_finger].pressed)
+    if(look_finger != -1 && touchInfo[look_finger].pressed)
+    {
+        float lookX = touchInfo[look_finger].dx * 15;  //this magic numbers here cause i'm a wizard
+        float lookY = touchInfo[look_finger].dy * 15;
+
+    
+        smoothedLookX = smoothedLookX * (1.0f - smoothing) + lookX * smoothing;
+        smoothedLookY = smoothedLookY * (1.0f - smoothing) + lookY * smoothing;
+    }
+    else
     {
         look_finger = -1;
         lookAxisX = lookAxisY = 0;
         smoothedLookX += (0.0f - smoothedLookX) * smoothing;
         smoothedLookY += (0.0f - smoothedLookY) * smoothing;
     }
-    
-    
-    float lookX = touchInfo[look_finger].dx * 15;  //this magic numbers here cause i'm a wizard
-    float lookY = touchInfo[look_finger].dy * 15;
-
-    
-    smoothedLookX = smoothedLookX * (1.0f - smoothing) + lookX * smoothing;
-    smoothedLookY = smoothedLookY * (1.0f - smoothing) + lookY * smoothing;
     
     lookAxisX = smoothedLookX;
     lookAxisY = -smoothedLookY;
