@@ -1080,7 +1080,7 @@ DisplayGameDebugText()
 #if defined _WIN32
 			"Win "
 #elif defined ANDROID
-			"Android"
+			"Android "
 #elif defined __linux__
 		    "Linux "
 #elif defined __APPLE__
