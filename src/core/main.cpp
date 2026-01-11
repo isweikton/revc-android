@@ -1708,7 +1708,7 @@ FrontendIdle(void)
 
 	CameraSize(Scene.camera, nil, SCREEN_VIEWWINDOW, SCREEN_ASPECT_RATIO);
 	CVisibilityPlugins::SetRenderWareCamera(Scene.camera);
-	RwCameraClear(Scene.camera, &gColourTop, CLEARMODE);
+	RwCameraClear(Scene.camera, &gColourTop, rwCAMERACLEARZ | rwCAMERACLEARSTENCIL | rwCAMERACLEARIMAGE); //1sh0zer: Not clearing image here cases bugs on adreno gpu
 	if(!RsCameraBeginUpdate(Scene.camera))
 		return;
 
