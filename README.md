@@ -6,6 +6,15 @@
 
 Android port workspace for `reVC`, with the app module, native sources, and bundled third-party dependencies in a single repository.
 
+## Maintainer
+
+- Android port packaging and repository maintenance: [isweikton](https://github.com/isweikton)
+<p>
+  <a href="https://t.me/weikton_official">
+    <img src="https://img.shields.io/badge/Telegram-weikton__official-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram">
+  </a>
+</p>
+
 ## Overview
 
 - Android package: `com.wn_klaymen1n.revc`
