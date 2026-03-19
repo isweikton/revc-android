@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2e2e2e</color>
+    <color name="colorPrimaryDark">#2e2e2e</color>
+    <color name="colorAccent">#388E3C</color>
+    <color name="backgroundGray">#212121</color>
+    <color name="loadingBackground">#0F141A</color>
+    <color name="loadingAccent">#6FE3A1</color>
+    <color name="loadingTrack">#294038</color>
+</resources>

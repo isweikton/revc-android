@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">reVC</string>
+    <string name="action_about">About</string>
+    <string name="about_text">Android launcher for reVC.</string>
+    <string name="empty_directory">The directory is empty</string>
+    <string name="file_path_hint">Path to game files</string>
+    <string name="browse_path">Browse</string>
+    <string name="select_folder">Select folder</string>
+    <string name="launch">Launch</string>
+    <string name="loading_caption">Android Runtime</string>
+    <string name="loading_title">reVC</string>
+    <string name="loading_subtitle">Preparing the game runtime before native startup.</string>
+    <string name="loading_checking_files">Checking game files</string>
+    <string name="loading_copying_assets">Syncing mobile interface assets</string>
+    <string name="loading_preparing_runtime">Preparing launch environment</string>
+    <string name="loading_starting_game">Starting native runtime</string>
+</resources>
