@@ -1,24 +1,3 @@
-# Native build artifacts
-*.a
-*.app
-*.dll
-*.dylib
-*.exe
-*.gch
-*.la
-*.lai
-*.lib
-*.lo
-*.mod
-*.o
-*.obj
-*.out
-*.pch
-*.pdb
-*.slo
-*.smod
-*.so
-
 # Android / Gradle
 .gradle/
 build/
