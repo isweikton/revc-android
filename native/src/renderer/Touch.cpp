@@ -1,6 +1,7 @@
 // 1wn_klaymen1n: I really tired of R* coding style,
 // anyway i don't think that this project is needed by someone, 
 // so let it be in some sort of shitty style :/
+// psychobye: its so laggy... -30fps on my device, but i guess it's because not using texture, so whatever
 #include "Pad.h"
 #include "Rect.h"
 #include "common.h"
@@ -23,7 +24,7 @@ CVehicle *FindPlayerVehicle(void);
 static void
 DrawTouchCircle(float cx, float cy, float radius, const CRGBA &fill, const CRGBA &outline)
 {
-    const int segments = 20;
+    const int segments = 12; // maybe its enough for 60fps on mobile?
     const float innerRadius = radius * 0.82f;
 
     for (int i = 0; i < segments; i++) {
