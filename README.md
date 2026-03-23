@@ -6,6 +6,12 @@
 
 Android port workspace for `reVC`, with the app module, native sources, and bundled third-party dependencies in a single repository.
 
+## Preview
+
+<p align="center">
+  <img src="./docs/preview.gif" alt="reVC Android preview" width="720">
+</p>
+
 ## Maintainer
 
 - Android port packaging and repository maintenance: [isweikton](https://github.com/isweikton)
