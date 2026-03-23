@@ -44,7 +44,7 @@ set_target_properties(OpenAL::OpenAL PROPERTIES
 
 add_library(MPG123::libmpg123 SHARED IMPORTED GLOBAL)
 set_target_properties(MPG123::libmpg123 PROPERTIES
-    IMPORTED_LOCATION "${REVC_LIB}/${REVC_ARCH_DIR}/libmpg123.so"
+    IMPORTED_LOCATION "${REVC_LIB}/${REVC_ARCH_DIR}/libmpg123.a"
     INTERFACE_INCLUDE_DIRECTORIES "${REVC_VENDOR}/mpg123/include"
 )
 
